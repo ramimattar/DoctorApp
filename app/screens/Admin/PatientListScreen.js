@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   dateButton: {
-    backgroundColor: '#eee',
+    backgroundColor: 'transparent',
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
@@ -177,9 +177,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    borderRadius: 16,
-    padding: 18,
+    backgroundColor: 'transparent',
+    borderRadius: 8,
+    padding: 25,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
