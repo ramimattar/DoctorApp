@@ -1,3 +1,4 @@
+import { Picker } from '@react-native-picker/picker';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -9,23 +10,41 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+const bloodTypes = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'];
 
 export default function PatientDetailScreen({ route }) {
   const { patient } = route.params;
   const [patientData, setPatientData] = useState(null);
   const [editableData, setEditableData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
     if (patient) {
+      const emergency = patient.get('emergencyContact') || {};
       const data = {
         name: patient.get('name'),
         age: String(patient.get('age') ?? ''),
         gender: patient.get('gender'),
         phone: patient.get('phone'),
+        email: patient.get('email'),
         location: patient.get('location'),
+        dateOfBirth: patient.get('dateOfBirth')?.toISOString().split('T')[0] ?? '',
+        medicalHistory: (patient.get('medicalHistory') || []).join(', '),
+        allergies: (patient.get('allergies') || []).join(', '),
+        bloodType: patient.get('bloodType'),
+        emergencyContact: {
+          name: emergency.name || '',
+          phone: emergency.phone || '',
+          relation: emergency.relation || '',
+        },
+        nationalId: patient.get('nationalId'),
+        insuranceNumber: patient.get('insuranceNumber'),
         createdAt: patient.createdAt?.toLocaleString(),
         updatedAt: patient.updatedAt?.toLocaleString(),
       };
@@ -38,16 +57,33 @@ export default function PatientDetailScreen({ route }) {
     setEditableData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleEmergencyChange = (subField, value) => {
+    setEditableData(prev => ({
+      ...prev,
+      emergencyContact: {
+        ...prev.emergencyContact,
+        [subField]: value,
+      },
+    }));
+  };
+
   const handleSave = async () => {
     if (!patient) return;
-
     try {
       setLoading(true);
       patient.set('name', editableData.name);
       patient.set('age', parseInt(editableData.age));
       patient.set('gender', editableData.gender);
       patient.set('phone', editableData.phone);
+      patient.set('email', editableData.email);
       patient.set('location', editableData.location);
+      patient.set('dateOfBirth', new Date(editableData.dateOfBirth));
+      patient.set('medicalHistory', editableData.medicalHistory.split(',').map(s => s.trim()));
+      patient.set('allergies', editableData.allergies.split(',').map(s => s.trim()));
+      patient.set('bloodType', editableData.bloodType);
+      patient.set('emergencyContact', editableData.emergencyContact);
+      patient.set('nationalId', editableData.nationalId);
+      patient.set('insuranceNumber', editableData.insuranceNumber);
       await patient.save();
       Alert.alert('Success', 'Patient data updated successfully.');
     } catch (error) {
@@ -55,6 +91,13 @@ export default function PatientDetailScreen({ route }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
+  const handleConfirm = (date) => {
+    handleChange('dateOfBirth', date.toISOString().split('T')[0]);
+    hideDatePicker();
   };
 
   if (!patientData) {
@@ -82,7 +125,18 @@ export default function PatientDetailScreen({ route }) {
         </View>
 
         <View style={styles.card}>
-          {['name', 'age', 'gender', 'phone', 'location'].map((field) => (
+          {[
+            'name',
+            'age',
+            'gender',
+            'phone',
+            'email',
+            'location',
+            'medicalHistory',
+            'allergies',
+            'nationalId',
+            'insuranceNumber',
+          ].map((field) => (
             <View style={styles.row} key={field}>
               <Text style={styles.label}>{field.charAt(0).toUpperCase() + field.slice(1)}</Text>
               <TextInput
@@ -93,6 +147,72 @@ export default function PatientDetailScreen({ route }) {
               />
             </View>
           ))}
+
+          {/* Blood Type Dropdown */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Blood Type</Text>
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={editableData.bloodType}
+                onValueChange={(value) => handleChange('bloodType', value)}
+              >
+                <Picker.Item label="Select Blood Type" value="" />
+                {bloodTypes.map(bt => (
+                  <Picker.Item key={bt} label={bt} value={bt} />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
+          {/* Date of Birth */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Date of Birth</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity style={{ flex: 1 }} onPress={showDatePicker}>
+                <TextInput
+                  style={styles.input}
+                  value={editableData.dateOfBirth}
+                  editable={false}
+                  placeholder="Select Date"
+                />
+              </TouchableOpacity>
+              {editableData.dateOfBirth ? (
+                <TouchableOpacity onPress={() => handleChange('dateOfBirth', '')}>
+                  <Text style={{ color: 'red', marginLeft: 10 }}>Clear</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </View>
+
+          {/* Emergency Contact */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Emergency Contact</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              value={editableData.emergencyContact.name}
+              onChangeText={(text) => handleEmergencyChange('name', text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone"
+              value={editableData.emergencyContact.phone}
+              onChangeText={(text) => handleEmergencyChange('phone', text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Relation"
+              value={editableData.emergencyContact.relation}
+              onChangeText={(text) => handleEmergencyChange('relation', text)}
+            />
+          </View>
+
           <View style={styles.row}>
             <Text style={styles.label}>Created At</Text>
             <Text style={styles.value}>{patientData.createdAt}</Text>
@@ -108,7 +228,7 @@ export default function PatientDetailScreen({ route }) {
             title={loading ? 'Saving...' : 'Save Changes'}
             onPress={handleSave}
             disabled={loading}
-            color="#1e3d59" // Optional: set button color
+            color="#1e3d59"
           />
         </View>
       </ScrollView>
@@ -117,12 +237,11 @@ export default function PatientDetailScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-
   buttonContainer: {
     marginTop: 20,
-    width:200,
+    width: 200,
     borderRadius: 8,
-    overflow: 'hidden', // ensures button respects borderRadius on Android
+    overflow: 'hidden',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -188,9 +307,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 12,
-    // marginBottom: 15,
     fontSize: 16,
     color: '#333',
+    marginBottom: 8,
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   centered: {
     flex: 1,

@@ -6,6 +6,7 @@ import DoctorDrawer from './navigation/DoctorDrawer';
 import LoginScreen from './screens/Auth/LoginScreen';
 //import RegisterScreen from './screens/Auth/RegisterScreen';
 import PatientDetailScreen from './screens/Admin/PatientDetailScreen';
+import VisitDetailScreen from './screens/Admin/VisitDetailScreen';
 import SplashScreen from './screens/Auth/SplashScreen';
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,12 @@ export default function App() {
         <Stack.Screen name="PatientDetailScreen" component={PatientDetailScreen}            
         options={{
             title: 'Patient Profile',
+            headerStyle: { backgroundColor: '#1e3d59' },
+            headerTintColor: '#fff',
+          }}/>
+        <Stack.Screen name="VisitDetailScreen" component={VisitDetailScreen}            
+        options={{
+            title: 'Visit Details',
             headerStyle: { backgroundColor: '#1e3d59' },
             headerTintColor: '#fff',
           }}/>
