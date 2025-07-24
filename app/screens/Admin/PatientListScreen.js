@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -21,9 +21,11 @@ const PatientListScreen = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  useEffect(() => {
-    fetchPatients();
-  }, [searchQuery, selectedDate]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPatients();
+    }, [searchQuery, selectedDate])
+  );
 
   const fetchPatients = async () => {
     try {

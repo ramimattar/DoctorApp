@@ -1,14 +1,14 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
 import {
-    ActivityIndicator,
-    FlatList,
-    ImageBackground,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Parse from '../../../utils/parseConfig';
@@ -21,9 +21,11 @@ const VisitsScreen = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  useEffect(() => {
-    fetchVisits();
-  }, [searchQuery, selectedDate]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchVisits();
+    }, [searchQuery, selectedDate])
+  );
 
   const fetchVisits = async () => {
     try {

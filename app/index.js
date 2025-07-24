@@ -5,6 +5,7 @@ import '../utils/parseConfig';
 import DoctorDrawer from './navigation/DoctorDrawer';
 import LoginScreen from './screens/Auth/LoginScreen';
 //import RegisterScreen from './screens/Auth/RegisterScreen';
+import AddVisitScreen from './screens/Admin/AddVisitScreen';
 import PatientDetailScreen from './screens/Admin/PatientDetailScreen';
 import VisitDetailScreen from './screens/Admin/VisitDetailScreen';
 import SplashScreen from './screens/Auth/SplashScreen';
@@ -27,6 +28,12 @@ export default function App() {
         <Stack.Screen name="VisitDetailScreen" component={VisitDetailScreen}            
         options={{
             title: 'Visit Details',
+            headerStyle: { backgroundColor: '#1e3d59' },
+            headerTintColor: '#fff',
+          }}/>
+        <Stack.Screen name="AddVisitScreen" component={AddVisitScreen}            
+        options={{
+            title: 'Add Visit',
             headerStyle: { backgroundColor: '#1e3d59' },
             headerTintColor: '#fff',
           }}/>

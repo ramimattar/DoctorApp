@@ -1,17 +1,17 @@
 // screens/Doctor/VisitDetailScreen.js
 import { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    Image,
-    ImageBackground,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  Button,
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -138,37 +138,49 @@ export default function VisitDetailScreen({ route }) {
           {/* visitDate */}
           <View style={styles.row}>
             <Text style={styles.label}>Visit Date</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => showDatePicker('visitDate')}>
-              <TextInput
-                style={styles.input}
-                value={editableData.visitDate}
-                editable={false}
-                placeholder="Select Date"
-              />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                onPress={() => showDatePicker('visitDate')}
+                style={{ flex: 1 }}
+              >
+                <TextInput
+                  style={styles.input}
+                  value={editableData.visitDate}
+                  editable={false}
+                  placeholder="Select Date"
+                  pointerEvents="none"
+                />
+              </TouchableOpacity>
               {editableData.visitDate ? (
                 <TouchableOpacity onPress={() => handleChange('visitDate', '')}>
                   <Text style={{ color: 'red', marginLeft: 10 }}>Clear</Text>
                 </TouchableOpacity>
               ) : null}
-            </TouchableOpacity>
+            </View>
           </View>
 
           {/* nextVisitDate */}
           <View style={styles.row}>
             <Text style={styles.label}>Next Visit Date</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => showDatePicker('nextVisitDate')}>
-              <TextInput
-                style={styles.input}
-                value={editableData.nextVisitDate}
-                editable={false}
-                placeholder="Select Date"
-              />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                onPress={() => showDatePicker('nextVisitDate')}
+                style={{ flex: 1 }}
+              >
+                <TextInput
+                  style={styles.input}
+                  value={editableData.nextVisitDate}
+                  editable={false}
+                  placeholder="Select Date"
+                  pointerEvents="none"
+                />
+              </TouchableOpacity>
               {editableData.nextVisitDate ? (
                 <TouchableOpacity onPress={() => handleChange('nextVisitDate', '')}>
                   <Text style={{ color: 'red', marginLeft: 10 }}>Clear</Text>
                 </TouchableOpacity>
               ) : null}
-            </TouchableOpacity>
+            </View>
           </View>
 
           {/* followUpRequired */}
@@ -284,7 +296,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontSize: 16,
     color: '#333',
-    marginBottom: 8,
   },
   centered: {
     flex: 1,

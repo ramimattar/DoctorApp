@@ -1,4 +1,6 @@
+// PatientDetailScreen.js
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,6 +20,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const bloodTypes = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'];
 
 export default function PatientDetailScreen({ route }) {
+  const navigation = useNavigation();
   const { patient } = route.params;
   const [patientData, setPatientData] = useState(null);
   const [editableData, setEditableData] = useState({});
@@ -228,6 +231,14 @@ export default function PatientDetailScreen({ route }) {
             title={loading ? 'Saving...' : 'Save Changes'}
             onPress={handleSave}
             disabled={loading}
+            color="#1e3d59"
+          />
+        </View>
+
+        <View style={[styles.buttonContainer, { marginTop: 10 }]}>
+          <Button
+            title="➕ Add Visit"
+            onPress={() => navigation.navigate('AddVisitScreen', { patient })}
             color="#1e3d59"
           />
         </View>
